@@ -1,0 +1,5 @@
+# JetBrains IDE (IntelliJ IDEA / PhpStorm)
+.idea/
+
+# Qodo (Qodo Merge / PR-Agent)
+.qodo/
