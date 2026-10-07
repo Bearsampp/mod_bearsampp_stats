@@ -2,12 +2,18 @@
 <extension type="module" client="site" method="upgrade">
 	<name>MOD_BEARSAMPP_STATS</name>
 	<author>Bearsampp</author>
-	<creationDate>2025-10-15</creationDate>
-	<copyright>Copyright (C) Bearsampp. All rights reserved.</copyright>
+	<creationDate>2026 October 07</creationDate>
+	<copyright>Copyright (C) 2026 Bearsampp</copyright>
 	<license>GNU General Public License version 2 or later</license>
-	<version>1.0.0</version>
+	<authorEmail>support@bearsampp.com</authorEmail>
+	<authorUrl>https://bearsampp.com</authorUrl>
+	<version>2026.10.07</version>
 	<description>MOD_BEARSAMPP_STATS_DESC</description>
 	<namespace path="src">Bearsampp\Module\Stats</namespace>
+	<dependencies>
+		<php version="8.1" />
+		<joomla version="5.4" />
+	</dependencies>
 
 	<files>
 		<filename module="mod_bearsampp_stats">mod_bearsampp_stats.php</filename>
@@ -27,6 +33,9 @@
 		<language tag="en-GB">language/en-GB/mod_bearsampp_stats.ini</language>
 		<language tag="en-GB">language/en-GB/mod_bearsampp_stats.sys.ini</language>
 	</languages>
+	<updateservers>
+		<server type="extension" priority="1" name="Bearsampp Stats Updates">https://raw.githubusercontent.com/Bearsampp/mod_bearsampp_stats/main/updates.xml</server>
+	</updateservers>
 
 	<config>
 		<fields name="params">

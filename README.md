@@ -72,6 +72,24 @@ This repo uses the same release workflow pattern as [`mod_bearsamppai`](https://
 
 The workflow generates `mod_bearsampp_stats_<version>.zip` (files at ZIP root) ready for Joomla installation.
 
+### Versions & releases
+
+Versions are **date-based** (`2026.10.07`, …), matching the [`mod_bearsamppai`](https://github.com/Bearsampp/mod_bearsamppai) pattern. The packager generates the version itself, so each run produces a new tag, a new `mod_bearsampp_stats_<version>.zip` release asset, and a version bump committed back to `main` (`commit-changes: 'true'`). The manifest carries a date-based version so a freshly installed copy and the update feed agree.
+
+Re-running the workflow does **not** create a second release. The packager fingerprints the files that ship (ignoring the version bump, changelog, update feed and CI config) and reuses the existing version when nothing a user would install has changed. Installed sites only see an update prompt when there is genuinely something new.
+
+### Update server
+
+`updates.xml` is the Joomla Update System feed and is served straight from this repository:
+
+```
+https://raw.githubusercontent.com/Bearsampp/mod_bearsampp_stats/main/updates.xml
+```
+
+The manifest registers it as an extension update server (`<updateservers>`), so installed sites see new releases in **System → Update → Extensions** and **Joomla Update**.
+
+The feed is published **after** the release: the packager confirms the release asset exists and only then rewrites the `<version>` and `downloadurl` of `updates.xml`, failing the run rather than advertising a version that cannot be downloaded.
+
 ## Stats generation (downloads.json + charts + dashboard.md)
 
 To populate `stats/downloads.json`, trend charts, and keep `stats/dashboard.md` preserved, use a scheduled stats workflow per module repo. The recommended reference implementation is [`module-apache`'s `stats-daily-with-chart.yml`](https://github.com/Bearsampp/module-apache/blob/main/.github/workflows/stats-daily-with-chart.yml).
