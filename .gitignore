@@ -1,5 +1,19 @@
-# JetBrains IDE (IntelliJ IDEA / PhpStorm)
-.idea/
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Qodo (Qodo Merge / PR-Agent)
+# Editor files
+*.bak
+*.orig
+*.swp
+*.swo
+*.tmp
+*~
+.vscode/
+.idea/
 .qodo/
+
+# Build artifacts
+build/
+*.zip

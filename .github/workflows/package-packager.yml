@@ -1,0 +1,47 @@
+name: Package and Release Module
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  package:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Joomla Extension Packager
+        uses: N6REJ/joomla-packager@3ef7f233e49ce7b458c28b69b6a25e8312151c84 # 2026.10.2
+        id: package
+        with:
+          extension-name: 'mod_bearsampp_stats'
+          extension-xml: 'mod_bearsampp_stats.xml'
+          extension-type: 'module'
+          targetplatform-version: '[56]\.[0-9]+'
+          author: 'Bearsampp'
+          copyright-holder: 'Bearsampp'
+          copyright-start-year: '2025'
+          license-file: 'LICENSE'
+          update-joomla-server: 'true'
+          commit-changes: 'true'
+          upload-artifact: 'false'
+          github-token: ${{ secrets.GH_PAT }}
+
+      - name: Upload extension package files
+        uses: actions/upload-artifact@v4
+        with:
+          name: mod_bearsampp_stats_${{ steps.package.outputs.version }}
+          path: ${{ steps.package.outputs.package-path }}
+          retention-days: 90
+          if-no-files-found: warn
