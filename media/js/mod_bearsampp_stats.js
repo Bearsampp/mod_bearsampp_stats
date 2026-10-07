@@ -1,179 +1,146 @@
 /**
- * Bearsampp Stats Module
- * Fetches stats/dashboard.md from raw.githubusercontent.com and renders in Bootstrap 5 modal
+ * @package     Bearsampp.Module.Stats
+ * @subpackage  mod_bearsampp_stats
+ * @license     GNU General Public License version 2 or later
+ * @link        https://github.com/Bearsampp/mod_bearsampp_stats
  */
 
-const markedUrl = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
-const dompurifyUrl = 'https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js';
+document.addEventListener('DOMContentLoaded', () => {
+    const options = Joomla.getOptions ? Joomla.getOptions('mod_bearsampp_stats') : {};
+    const i18n = options.i18n || {};
+    const ttl = (options.ttl !== undefined) ? parseInt(options.ttl, 10) : 30;
+    const gridCols = options.gridCols || 5;
 
-async function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-            resolve();
-            return;
-        }
-        const s = document.createElement('script');
-        s.src = src;
-        s.async = true;
-        s.onload = () => resolve();
-        s.onerror = () => reject(new Error('Failed to load ' + src));
-        document.head.appendChild(s);
-    });
-}
+    const modals = [];
+    const modalEl = document.querySelector('.bearsampp-stats-modal');
+    let bsModal;
 
-function getCacheKey(slug, branch) {
-    return `bearsampp_stats_${slug}_${branch}`;
-}
+    if (modalEl && typeof bootstrap !== 'undefined') {
+        bsModal = new bootstrap.Modal(modalEl);
+        modals.push(bsModal);
+    }
 
-function readCache(key, ttlMinutes) {
-    try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return null;
-        const item = JSON.parse(raw);
-        if (!item || !item.ts || !item.md) return null;
-        const ageMin = (Date.now() - item.ts) / 60000;
-        if (ttlMinutes > 0 && ageMin > ttlMinutes) {
-            localStorage.removeItem(key);
+    // Helper: cache
+    const getCache = (key) => {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            if (ttl > 0 && data.expires < Date.now()) {
+                localStorage.removeItem(key);
+                return null;
+            }
+            return data.content;
+        } catch (e) {
             return null;
         }
-        return item.md;
-    } catch (e) {
-        return null;
-    }
-}
+    };
 
-function writeCache(key, md) {
-    try {
-        localStorage.setItem(key, JSON.stringify({ ts: Date.now(), md }));
-    } catch (e) {
-        // Ignore quota errors
-    }
-}
-
-function ensureMarkdownLibs() {
-    return Promise.all([
-        loadScript(markedUrl).catch(() => null),
-        loadScript(dompurifyUrl).catch(() => null),
-    ]);
-}
-
-function parseMarkdown(md) {
-    if (window.marked && typeof window.marked.parse === 'function') {
-        let html = window.marked.parse(md);
-        if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
-            html = window.DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+    const setCache = (key, content) => {
+        if (ttl <= 0) return;
+        try {
+            localStorage.setItem(key, JSON.stringify({
+                content: content,
+                expires: Date.now() + ttl * 60 * 1000
+            }));
+        } catch (e) {
+            // ignore
         }
-        return html;
-    }
-    // Fallback: escape
-    const div = document.createElement('div');
-    div.textContent = md;
-    return div.innerHTML;
-}
+    };
 
-document.addEventListener('DOMContentLoaded', () => {
-    const opts = Joomla.getOptions ? Joomla.getOptions('mod_bearsampp_stats') : (window.mod_bearsampp_stats || {});
-    const i18n = opts.i18n || {};
-    const ttlDefault = typeof opts.ttl === 'number' ? opts.ttl : 30;
-    const branchDefault = opts.branch || 'main';
+    const fetchAndRender = async (rawUrl, module, slug, branch, contentEl, loadingEl, errorEl, isModal = false) => {
+        const baseUrl = rawUrl.substring(0, rawUrl.lastIndexOf('/') + 1);
+        const cacheKey = `bearsampp-stats:${module}:${slug}:${branch}`;
+        let htmlContent = getCache(cacheKey);
 
-    let libsReady = ensureMarkdownLibs();
+        if (htmlContent) {
+            renderContent(htmlContent, contentEl, baseUrl);
+            if (loadingEl) loadingEl.classList.add('d-none');
+            if (contentEl) contentEl.classList.remove('d-none');
+            if (errorEl) errorEl.classList.add('d-none');
+            return;
+        }
 
-    document.querySelectorAll('.bearsampp-stats-card').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-            const moduleBase = btn.dataset.module;
-            const slug = btn.dataset.slug || ('module-' + moduleBase);
-            const display = btn.dataset.display || moduleBase;
-            const rawUrl = btn.dataset.rawurl;
-
-            // Find modal for this module instance
-            const modalEl = btn.closest('.mod-bearsampp-stats')?.nextElementSibling;
-            if (!modalEl || !modalEl.classList.contains('bearsampp-stats-modal')) return;
-
-            const modal = new bootstrap.Modal(modalEl);
-            const titleEl = modalEl.querySelector('.modal-title');
-            const loadingEl = modalEl.querySelector('.bearsampp-stats-loading');
-            const contentEl = modalEl.querySelector('.bearsampp-stats-content');
-            const errorEl = modalEl.querySelector('.bearsampp-stats-error');
-
-            // Reset state
-            if (titleEl) titleEl.textContent = i18n.statsFor ? (i18n.statsFor + ' ' + display) : ('Stats: ' + display);
+        try {
             if (loadingEl) loadingEl.classList.remove('d-none');
-            if (contentEl) {
-                contentEl.innerHTML = '';
-                contentEl.classList.add('d-none');
-            }
+            if (contentEl) contentEl.classList.add('d-none');
+            if (errorEl) errorEl.classList.add('d-none');
+
+            const response = await fetch(rawUrl, { cache: 'no-cache' });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+
+            const markdown = await response.text();
+            let html = marked.parse ? marked.parse(markdown) : markdown;
+            if (window.DOMPurify) html = DOMPurify.sanitize(html);
+
+            setCache(cacheKey, html);
+            renderContent(html, contentEl, baseUrl);
+
+            if (loadingEl) loadingEl.classList.add('d-none');
+            if (contentEl) contentEl.classList.remove('d-none');
+            if (errorEl) errorEl.classList.add('d-none');
+        } catch (err) {
+            console.error('Bearsampp Stats fetch error:', err);
+            if (loadingEl) loadingEl.classList.add('d-none');
+            if (contentEl) contentEl.classList.add('d-none');
             if (errorEl) {
-                errorEl.textContent = '';
-                errorEl.classList.add('d-none');
+                errorEl.textContent = i18n.errorFetch || 'Failed to load stats.';
+                errorEl.classList.remove('d-none');
             }
+            if (isModal && bsModal) bsModal.hide();
+        }
+    };
 
-            modal.show();
-
-            const cacheKey = getCacheKey(moduleBase || slug.replace('module-', ''), branchDefault);
-            const ttlM = ttlDefault;
-
-            try {
-                await libsReady;
-
-                let md = readCache(cacheKey, ttlM);
-                if (md === null) {
-                    const res = await fetch(rawUrl, { cache: 'default' });
-                    if (res.status === 404) {
-                        throw new Error('NOT_FOUND');
-                    }
-                    if (!res.ok) {
-                        throw new Error('HTTP_' + res.status);
-                    }
-                    md = await res.text();
-                    writeCache(cacheKey, md);
-                }
-
-                // Render markdown
-                const html = parseMarkdown(md || '');
-
-                if (loadingEl) loadingEl.classList.add('d-none');
-                if (contentEl) {
-                    contentEl.innerHTML = html;
-                    contentEl.classList.remove('d-none');
-                }
-
-                // Rewrite relative image/link paths against the raw GitHub folder so
-                // graphs, badges and charts (e.g. stats/charts/total-trend--black.svg
-                // referenced as "charts/total-trend--black.svg") resolve to
-                // raw.githubusercontent.com instead of the page origin.
-                const baseUrl = rawUrl.substring(0, rawUrl.lastIndexOf('/') + 1);
-                const isAbsoluteUrl = (u) => /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(u);
-                contentEl?.querySelectorAll('img[src], a[href], source[src]').forEach((el) => {
-                    const attr = el.tagName === 'A' ? 'href' : 'src';
-                    const val = el.getAttribute(attr);
-                    if (val && !isAbsoluteUrl(val)) {
-                        try {
-                            el.setAttribute(attr, new URL(val, baseUrl).href);
-                        } catch (e) {
-                            // Keep the original value if it cannot be resolved.
-                        }
-                    }
-                });
-
-                // Make relative links/images work if any appear (GitHub raw images usually absolute)
-                // Optional: open external links in new tab
-                contentEl?.querySelectorAll('a[href^="http"]').forEach((a) => {
-                    if (!a.getAttribute('target')) a.setAttribute('target', '_blank');
-                    if (!a.getAttribute('rel')) a.setAttribute('rel', 'noopener noreferrer');
-                });
-
-            } catch (err) {
-                let msg = i18n.errorFetch || 'Failed to load stats.';
-                if (err && err.message === 'NOT_FOUND') {
-                    msg = i18n.noStats || 'Stats coming soon for this module.';
-                }
-                if (loadingEl) loadingEl.classList.add('d-none');
-                if (errorEl) {
-                    errorEl.textContent = msg;
-                    errorEl.classList.remove('d-none');
+    const renderContent = (html, contentEl, baseUrl) => {
+        if (!contentEl) return;
+        contentEl.innerHTML = html;
+        const isAbsoluteUrl = (u) => /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(u);
+        contentEl.querySelectorAll('img[src], a[href], source[src]').forEach((el) => {
+            const attr = el.tagName === 'A' ? 'href' : 'src';
+            const val = el.getAttribute(attr);
+            if (val && !isAbsoluteUrl(val)) {
+                try {
+                    el.setAttribute(attr, new URL(val, baseUrl).href);
+                } catch (e) {
                 }
             }
         });
+        contentEl.querySelectorAll('a[href^="http"]').forEach((a) => {
+            if (!a.getAttribute('target')) a.setAttribute('target', '_blank');
+            if (!a.getAttribute('rel')) a.setAttribute('rel', 'noopener noreferrer');
+        });
+    };
+
+    // Grid buttons
+    document.querySelectorAll('.bearsampp-stats-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            const module = card.dataset.module;
+            const slug = card.dataset.slug;
+            const display = card.dataset.display;
+            const rawUrl = card.dataset.rawurl;
+            const modalTitle = document.querySelector('.bearsampp-stats-modal .modal-title');
+            if (modalTitle) modalTitle.textContent = (i18n.statsFor || 'Stats:') + ' ' + (display || module);
+            const contentEl = document.querySelector('.bearsampp-stats-modal .bearsampp-stats-content');
+            const loadingEl = document.querySelector('.bearsampp-stats-modal .bearsampp-stats-loading');
+            const errorEl = document.querySelector('.bearsampp-stats-modal .bearsampp-stats-error');
+            if (rawUrl) {
+                fetchAndRender(rawUrl, module, slug, options.branch || 'main', contentEl, loadingEl, errorEl, true);
+            }
+            if (bsModal) bsModal.show();
+        });
     });
+
+    // Inline single module
+    const inline = document.querySelector('.bearsampp-stats-inline');
+    if (inline) {
+        const module = inline.dataset.module;
+        const slug = inline.dataset.slug;
+        const rawUrl = inline.dataset.rawurl;
+        const contentEl = inline.querySelector('.bearsampp-stats-content');
+        const loadingEl = inline.querySelector('.bearsampp-stats-loading');
+        const errorEl = inline.querySelector('.bearsampp-stats-error');
+        if (rawUrl) {
+            fetchAndRender(rawUrl, module, slug, options.branch || 'main', contentEl, loadingEl, errorEl, false);
+        }
+    }
 });

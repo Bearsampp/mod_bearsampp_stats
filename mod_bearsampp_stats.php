@@ -19,5 +19,9 @@ $branch    = $params->get('branch', 'main');
 $ttl       = (int) $params->get('cache_ttl_minutes', 30);
 $showIcons = (int) $params->get('show_icons', 1);
 $iconClass = trim((string) $params->get('icon_class', 'fas fa-chart-bar'));
+$gridCols  = (int) $params->get('grid_columns', 5);
+if ($gridCols < 3 || $gridCols > 5) {
+    $gridCols = 5;
+}
 
 require ModuleHelper::getLayoutPath('mod_bearsampp_stats', $params->get('layout'));

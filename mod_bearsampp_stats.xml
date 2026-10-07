@@ -12,7 +12,7 @@
 	<namespace path="src">Bearsampp\Module\Stats</namespace>
 	<dependencies>
 		<php version="8.1" />
-		<joomla version="5.4" />
+		<joomla version="5.0" />
 	</dependencies>
 
 	<files>
@@ -47,7 +47,7 @@
 					description="MOD_BEARSAMPP_STATS_MODULES_DESC"
 					rows="6"
 					cols="40"
-					default="module-apache, module-bruno, module-composer, module-ghostscript, module-git, module-mailpit, module-mariadb, module-memcached, module-mysql, module-ngrok, module-nodejs, module-perl, module-php, module-phpmyadmin, module-phppgadmin, module-postgresql, module-powershell, module-python, module-ruby, module-xlight"
+					default="module-apache"
 				/>
 				<field
 					name="parent_repo"
@@ -73,6 +73,18 @@
 					default="gh-dl"
 					size="20"
 				/>
+				<field
+					name="grid_columns"
+					type="list"
+					label="MOD_BEARSAMPP_STATS_COLUMNS_LABEL"
+					description="MOD_BEARSAMPP_STATS_COLUMNS_DESC"
+					default="5"
+					class="btn-group btn-group-yesno"
+				>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</field>
 				<field
 					name="cache_ttl_minutes"
 					type="number"
