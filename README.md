@@ -61,7 +61,7 @@ The default list uses the prefixed form (`module-apache,module-bruno,...`), but 
 
 | Field | Default | Description |
 |---|---|---|
-| Modules list | `module-apache,module-bruno,...,module-xlight` | Comma/line-separated entries. `apache` and `module-apache` are equivalent (both resolve to the `module-` repo). Order = grid order (left-to-right, top-to-bottom). |
+| Modules list | `module-apache, module-bruno, ..., module-xlight` | Comma/line-separated entries. Spaces after commas are allowed (e.g. `apache, bruno`). `apache` and `module-apache` are equivalent (both resolve to the `module-` repo). Order = grid order (left-to-right, top-to-bottom). |
 | Parent repository | `https://github.com/Bearsampp` | GitHub organisation/user that hosts the module repos. Enter your own path here, e.g. `https://github.com/YourName` (or just `YourName`). |
 | Branch | `main` | Git branch to pull `gh-dl/dashboard.md` from. |
 | Stats folder | `gh-dl` | Folder inside each module repo that holds `dashboard.md` and its charts. Set to `stats` to use the `stats/` folder instead. |

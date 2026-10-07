@@ -36,7 +36,9 @@ class ModBearsamppStatsHelper
 
         // Split by comma, newline, semicolon, space
         $items = preg_split('/[\r\n,;\s]+/', $listRaw);
-        $items = array_filter(array_map('trim', $items));
+        $items = array_filter(array_map(function ($v) {
+            return trim($v);
+        }, $items));
         $items = array_values(array_unique($items));
 
         $result = [];

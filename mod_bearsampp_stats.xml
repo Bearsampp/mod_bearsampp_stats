@@ -47,7 +47,7 @@
 					description="MOD_BEARSAMPP_STATS_MODULES_DESC"
 					rows="6"
 					cols="40"
-					default="module-apache,module-bruno,module-composer,module-ghostscript,module-git,module-mailpit,module-mariadb,module-memcached,module-mysql,module-ngrok,module-nodejs,module-perl,module-php,module-phpmyadmin,module-phppgadmin,module-postgresql,module-powershell,module-python,module-ruby,module-xlight"
+					default="module-apache, module-bruno, module-composer, module-ghostscript, module-git, module-mailpit, module-mariadb, module-memcached, module-mysql, module-ngrok, module-nodejs, module-perl, module-php, module-phpmyadmin, module-phppgadmin, module-postgresql, module-powershell, module-python, module-ruby, module-xlight"
 				/>
 				<field
 					name="parent_repo"
