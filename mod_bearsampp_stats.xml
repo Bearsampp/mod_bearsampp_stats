@@ -70,7 +70,7 @@
 					type="text"
 					label="MOD_BEARSAMPP_STATS_FOLDER_LABEL"
 					description="MOD_BEARSAMPP_STATS_FOLDER_DESC"
-					default="stats"
+					default="gh-dl"
 					size="20"
 				/>
 				<field
