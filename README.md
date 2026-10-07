@@ -1,17 +1,17 @@
 # Bearsampp Stats Grid Module (mod_bearsampp_stats)
 
-A Joomla 6 site module that displays a 5×4 (responsive) grid of Bearsampp modules. Each card shows a "stats" icon and the module name. Clicking a card opens a Bootstrap 5 modal popup and renders the `stats/dashboard.md` file from that module's GitHub repository.
+A Joomla 6 site module that displays a 5×4 (responsive) grid of Bearsampp modules. Each card shows a "stats" icon and the module name. Clicking a card opens a Bootstrap 5 modal popup and renders the `gh-dl/dashboard.md` file (folder configurable, default `gh-dl`) from that module's GitHub repository.
 
 ## Purpose
 
-This module lets bearsampp.com display per-module stats without relying on GitHub's blob HTML rendering. Instead, it fetches the **raw Markdown** from `raw.githubusercontent.com` and renders it client-side, preserving any graphs, badges, images, or tables embedded in each module's `stats/dashboard.md`.
+This module lets bearsampp.com display per-module stats without relying on GitHub's blob HTML rendering. Instead, it fetches the **raw Markdown** from `raw.githubusercontent.com` and renders it client-side, preserving any graphs, badges, images, or tables embedded in each module's `gh-dl/dashboard.md`.
 
-> Note: `stats/downloads.json` is useful for numeric metrics but does **not** contain the full visual dashboard (badges/graphs/layout). This module intentionally renders `dashboard.md` so you see the same graphs and badges displayed there.
+> Note: `gh-dl/downloads.json` is useful for numeric metrics but does **not** contain the full visual dashboard (badges/graphs/layout). This module intentionally renders `dashboard.md` so you see the same graphs and badges displayed there.
 
 ## Features
 
 - 5×4 grid by default, fully responsive (5→4→3→2→1 columns)
-- Uses existing `stats/dashboard.md` files (no changes required to module repos)
+- Uses existing `gh-dl/dashboard.md` files (no changes required to module repos)
 - Single module with configurable array/list (no need for a module per repo)
 - Popup modal on click (no navigation away from page)
 - Client-side Markdown rendering with [Marked.js](https://marked.js.org/) + HTML sanitization with [DOMPurify](https://github.com/cure53/DOMPurify)
@@ -33,12 +33,23 @@ This module lets bearsampp.com display per-module stats without relying on GitHu
   The module then fetches:
 
   ```text
-  https://raw.githubusercontent.com/YourName/<module-slug>/<branch>/stats/dashboard.md
+  https://raw.githubusercontent.com/YourName/<module-slug>/<branch>/gh-dl/dashboard.md
   ```
 
-- On click, it fetches the raw `stats/dashboard.md` for that module and branch.
+- On click, it fetches the raw `gh-dl/dashboard.md` for that module and branch.
 - Markdown is parsed and sanitized in the browser, then injected into a Bootstrap 5 modal. External links open in a new tab.
 - Results are cached in `localStorage` per `module+branch` to reduce repeated fetches.
+
+### Repo name resolution
+
+Each entry in **Modules list** names a repository under your **Parent repository** path. `module-apache` and `apache` are **the same thing** — both resolve to the `module-apache` repo:
+
+```text
+apache         → https://raw.githubusercontent.com/YourName/module-apache/<branch>/gh-dl/dashboard.md
+module-apache  → https://raw.githubusercontent.com/YourName/module-apache/<branch>/gh-dl/dashboard.md
+```
+
+The default list uses the prefixed form (`module-apache,module-bruno,...`), but plain names work too.
 
 ## Installation (Manual)
 
@@ -50,9 +61,10 @@ This module lets bearsampp.com display per-module stats without relying on GitHu
 
 | Field | Default | Description |
 |---|---|---|
-| Modules list | `apache,bruno,...,xlight` | Comma/line-separated slugs. Accepts `apache` or `module-apache`. Order = grid order (left-to-right, top-to-bottom). |
+| Modules list | `module-apache,module-bruno,...,module-xlight` | Comma/line-separated entries. `apache` and `module-apache` are equivalent (both resolve to the `module-` repo). Order = grid order (left-to-right, top-to-bottom). |
 | Parent repository | `https://github.com/Bearsampp` | GitHub organisation/user that hosts the module repos. Enter your own path here, e.g. `https://github.com/YourName` (or just `YourName`). |
-| Branch | `main` | Git branch to pull `stats/dashboard.md` from. |
+| Branch | `main` | Git branch to pull `gh-dl/dashboard.md` from. |
+| Stats folder | `gh-dl` | Folder inside each module repo that holds `dashboard.md` and its charts. Set to `stats` to use the `stats/` folder instead. |
 | Cache TTL (minutes) | `30` | Client-side localStorage cache per module. `0` disables cache (useful for development). |
 | Show stats icon | `Yes` | Toggle the chart icon on cards. |
 | Stats icon (FA code) | `fas fa-chart-bar` | Font Awesome icon classes rendered on each card. Change the FA code to use another icon (e.g. `fa-solid fa-chart-column`), or leave empty for the built-in SVG chart icon. Requires Font Awesome loaded by your template. |
@@ -91,7 +103,9 @@ The feed is published **after** the release: the packager confirms the release a
 
 ## Stats generation (downloads.json + charts + dashboard.md)
 
-To populate `stats/downloads.json`, trend charts, and keep `stats/dashboard.md` preserved, use a scheduled stats workflow per module repo. The recommended reference implementation is [`module-apache`'s `stats-daily-with-chart.yml`](https://github.com/Bearsampp/module-apache/blob/main/.github/workflows/stats-daily-with-chart.yml).
+To populate `gh-dl/downloads.json`, trend charts, and keep `gh-dl/dashboard.md` preserved, use a scheduled stats workflow per module repo. The recommended reference implementation is [`module-apache`'s `stats-daily-with-chart.yml`](https://github.com/Bearsampp/module-apache/blob/main/.github/workflows/stats-daily-with-chart.yml).
+
+> **Folder consistency**: The module reads `<Stats folder>/dashboard.md` (default `gh-dl`). The reference workflow below generates into `stats/` — either set the module's **Stats folder** param to `stats`, or adjust the workflow's output folder to `gh-dl` so both agree.
 
 ### How it works (reference)
 
@@ -108,10 +122,8 @@ The Apache workflow:
 ### How to implement in a module repo
 
 1. **Create the workflow file** in the target repo: `.github/workflows/stats-daily-with-chart.yml` (copy the Apache version as-is is the easiest starting point).
-2. **Ensure `stats/` exists** with at least `stats/dashboard.md` (your dashboard content). The module reads this file; the action will preserve/update it on every run.
-3. **Required GitHub secrets** (set in repo Settings → Secrets and variables → Actions):
-   - `GH_PAT` — Personal Access Token with repo/write permissions used by `create-pull-request`, auto-merge, and checkout with token (as used in the workflow).
-   - `BEARSAMPP_BOT_PAT` — Bot PAT used to approve the PR (`gh pr review --approve`). If you don't use a bot, you can adjust the approval step to use `GH_PAT` instead, but the reference uses both.
+2. **Ensure the stats folder exists** with at least `gh-dl/dashboard.md` (your dashboard content). The module reads this file; the action will preserve/update it on every run.
+3. **GitHub credentials (if using a private workflow helper)**: If your workflow uses tokens to open/approve/merge PRs, create the required token secrets in repo Settings → Secrets and variables → Actions. Refer to your workflow's documentation for the exact names; use environment-scoped or repository-scoped secrets as appropriate for your setup. No real token names are listed here to avoid leaking sensitive details.
 4. **Branch protection considerations**: `main` is protected in Bearsampp repos. The workflow handles this by writing to `gh-dl-data` staging branch and promoting via PR — do not change this pattern unless your protection rules differ.
 
 ### Running the action for the first time
@@ -133,7 +145,7 @@ The Apache workflow:
 - **Path consistency**: The workflow normalizes references from `gh-dl` to `stats` inside `dashboard.md` during the PR step. If your custom dashboard references `gh-dl/` paths, they'll be adjusted automatically.
 - **First run may create branches**: Expect `gh-dl-data` and `update-stats` branches to appear on first successful run. These are normal and can be left (future runs overwrite/update `update-stats` and refresh `gh-dl-data`).
 - **No material changes**: Some days there may be no new downloads — the action detects this and skips creating a PR entirely (`changed=false`).
-- **Secrets required**: If you see PR creation/approval/merge failures on first run, verify `GH_PAT` and `BEARSAMPP_BOT_PAT` have sufficient repo permissions (contents: write, pull-requests: write) and that branch protection allows the bot to merge.
+- **Secrets required**: If you see PR creation/approval/merge failures on first run, verify that any required token secrets are configured with sufficient permissions for your workflow (refer to the workflow's documentation for the specific secret names and scopes). Branch protection rules may affect auto-merge.
 - **Manual testing**: Use `workflow_dispatch` anytime to force a snapshot refresh (helpful after publishing a new release).
 - **Cron schedule**: `0 3 * * *` (3 AM UTC) is fine for Bearsampp repos; adjust only if you have different reporting needs.
 
@@ -141,13 +153,13 @@ The Apache workflow:
 
 1. Edit files in `E:\Bearsampp-development\mod_bearsampp_stats\`
 2. Test locally in a Joomla 6 site. Easiest: copy/symlink the folder to `modules/mod_bearsampp_stats/` in your test site, or zip and reinstall.
-3. Test with `php`, `apache`, `xlight` (has `stats/`).
+3. Test with `php`, `apache`, `xlight` (has `gh-dl/`).
 4. Verify badges/images/tables render, modal scrolls, responsive breakpoints, cache (open twice), and 404 fallback ("Stats coming soon").
 5. Bump `<version>` in `mod_bearsampp_stats.xml` when preparing a new release.
 
 ## Troubleshooting
 
-- **Broken images**: If `dashboard.md` uses relative image paths (e.g. `./assets/chart.png`), those resolve relative to the page origin, not the raw GitHub path. Prefer absolute image URLs (`https://raw.githubusercontent.com/Bearsampp/module-.../<branch>/stats/assets/...`) or Shields.io absolute badge URLs.
+- **Broken images**: Relative image paths in `dashboard.md` (e.g. `charts/total-trend--black.svg` or `./assets/chart.png`) were previously broken because the browser resolved them against the page origin instead of the raw GitHub URL. The module now automatically rewrites relative `img`/`source`/`a` paths against the raw stats folder (e.g. `charts/total-trend--black.svg` → `https://raw.githubusercontent.com/YourName/<repo>/<branch>/gh-dl/charts/total-trend--black.svg`). Absolute URLs (Shields.io badges, full raw GitHub URLs) still work unchanged. If charts still don't show, check the rewritten URL in the browser devtools — the file must exist in that module repo's stats folder (`gh-dl/`, or whatever the **Stats folder** param is set to).
 - **CORS**: `raw.githubusercontent.com` is CORS-accessible for GET in standard browser contexts.
 - **Mixed branches**: Single global `Branch` param covers all.
 

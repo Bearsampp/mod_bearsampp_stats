@@ -47,7 +47,7 @@
 					description="MOD_BEARSAMPP_STATS_MODULES_DESC"
 					rows="6"
 					cols="40"
-					default="apache,bruno,composer,ghostscript,git,mailpit,mariadb,memcached,mysql,ngrok,nodejs,perl,php,phpmyadmin,phppgadmin,postgresql,powershell,python,ruby,xlight"
+					default="module-apache,module-bruno,module-composer,module-ghostscript,module-git,module-mailpit,module-mariadb,module-memcached,module-mysql,module-ngrok,module-nodejs,module-perl,module-php,module-phpmyadmin,module-phppgadmin,module-postgresql,module-powershell,module-python,module-ruby,module-xlight"
 				/>
 				<field
 					name="parent_repo"
@@ -64,6 +64,14 @@
 					description="MOD_BEARSAMPP_STATS_BRANCH_DESC"
 					default="main"
 					size="10"
+				/>
+				<field
+					name="stats_folder"
+					type="text"
+					label="MOD_BEARSAMPP_STATS_FOLDER_LABEL"
+					description="MOD_BEARSAMPP_STATS_FOLDER_DESC"
+					default="gh-dl"
+					size="20"
 				/>
 				<field
 					name="cache_ttl_minutes"

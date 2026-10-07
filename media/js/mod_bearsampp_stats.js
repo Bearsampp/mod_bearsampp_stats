@@ -138,6 +138,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     contentEl.classList.remove('d-none');
                 }
 
+                // Rewrite relative image/link paths against the raw GitHub folder so
+                // graphs, badges and charts (e.g. stats/charts/total-trend--black.svg
+                // referenced as "charts/total-trend--black.svg") resolve to
+                // raw.githubusercontent.com instead of the page origin.
+                const baseUrl = rawUrl.substring(0, rawUrl.lastIndexOf('/') + 1);
+                const isAbsoluteUrl = (u) => /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(u);
+                contentEl?.querySelectorAll('img[src], a[href], source[src]').forEach((el) => {
+                    const attr = el.tagName === 'A' ? 'href' : 'src';
+                    const val = el.getAttribute(attr);
+                    if (val && !isAbsoluteUrl(val)) {
+                        try {
+                            el.setAttribute(attr, new URL(val, baseUrl).href);
+                        } catch (e) {
+                            // Keep the original value if it cannot be resolved.
+                        }
+                    }
+                });
+
                 // Make relative links/images work if any appear (GitHub raw images usually absolute)
                 // Optional: open external links in new tab
                 contentEl?.querySelectorAll('a[href^="http"]').forEach((a) => {

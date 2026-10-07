@@ -20,10 +20,15 @@ class ModBearsamppStatsHelper
      */
     public static function getModules($params)
     {
-        $listRaw = trim((string) $params->get('modules_list', ''));
-        $branch  = trim((string) $params->get('branch', 'main'));
-        $ttl     = (int) $params->get('cache_ttl_minutes', 30);
-        $owner   = self::getOwner($params);
+        $listRaw     = trim((string) $params->get('modules_list', ''));
+        $branch      = trim((string) $params->get('branch', 'main'));
+        $ttl         = (int) $params->get('cache_ttl_minutes', 30);
+        $statsFolder = trim((string) $params->get('stats_folder', 'gh-dl'));
+        $owner       = self::getOwner($params);
+
+        // Sanitize folder name (single folder segment, no path traversal)
+        $statsFolder = preg_replace('#[^a-zA-Z0-9._-]#', '', $statsFolder ?: 'gh-dl');
+        $statsFolder = $statsFolder !== '' ? $statsFolder : 'gh-dl';
 
         if ($listRaw === '') {
             return [];
@@ -37,7 +42,8 @@ class ModBearsamppStatsHelper
         $result = [];
 
         foreach ($items as $slug) {
-            // Normalize slug: allow "module-apache" or "apache"
+            // Normalize slug: "module-apache" and "apache" are equivalent and both
+            // map to the "module-apache" repo.
             if (strpos($slug, 'module-') !== 0) {
                 $slugNorm = 'module-' . $slug;
             } else {
@@ -50,10 +56,11 @@ class ModBearsamppStatsHelper
 
             // Raw dashboard.md URL (raw.githubusercontent.com)
             $rawUrl = sprintf(
-                'https://raw.githubusercontent.com/%s/%s/%s/stats/dashboard.md',
+                'https://raw.githubusercontent.com/%s/%s/%s/%s/dashboard.md',
                 rawurlencode($owner),
                 rawurlencode($slugNorm),
-                $branch
+                $branch,
+                rawurlencode($statsFolder)
             );
 
             // Fallback display name mapping (keeps common names nice)
