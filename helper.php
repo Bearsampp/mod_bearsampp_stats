@@ -113,19 +113,7 @@ class ModBearsamppStatsHelper
      */
     public static function getOwner($params)
     {
-        $parent = trim((string) $params->get('parent_repo', 'https://github.com/Bearsampp'));
-
-        if ($parent === '') {
-            $parent = 'https://github.com/Bearsampp';
-        }
-
-        $parent = preg_replace('#^https?://#i', '', $parent);
-        $parent = preg_replace('#^www\.#i', '', $parent);
-        $parent = preg_replace('#^github\.com/#i', '', $parent);
-
-        $segments = array_values(array_filter(explode('/', trim($parent, '/')), 'strlen'));
-        $owner    = $segments[0] ?? '';
-
+        $owner = trim((string) $params->get('parent_repo'));
         return $owner !== '' ? $owner : 'Bearsampp';
     }
 }
