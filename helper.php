@@ -28,7 +28,7 @@ class ModBearsamppStatsHelper
 
         // Sanitize folder name (single folder segment, no path traversal)
         $statsFolder = preg_replace('#[^a-zA-Z0-9._-]#', '', $statsFolder ?: 'gh-dl');
-        $statsFolder = $statsFolder !== '' ? $statsFolder : 'gh-dl';
+        $statsFolder = $statsFolder !== '' ? $statsFolder : 'stats';
 
         if ($listRaw === '') {
             return [];
