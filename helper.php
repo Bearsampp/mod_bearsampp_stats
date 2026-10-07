@@ -54,7 +54,7 @@ class ModBearsamppStatsHelper
 
             // Raw dashboard.md URL (raw.githubusercontent.com)
             $rawUrl = sprintf(
-                'https://github.com/%s/%s/blob/%s/%s/dashboard.md',
+                'https://raw.githubusercontent.com/%s/%s/%s/%s/dashboard.md',
                 rawurlencode($owner),
                 rawurlencode($slugNorm),
                 $branch,
