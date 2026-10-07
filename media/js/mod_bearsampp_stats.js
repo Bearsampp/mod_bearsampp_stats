@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('HTTP ' + response.status);
 
             const markdown = (await response.text())
-                .replace(/^# Bearsampp Downloads$/m, `# ${slug} Downloads`)
+                .replace(/^# Bearsampp Downloads$/m, `# ${slug} Statistics`)
                 .replace(
                     /^(Release asset download totals for \[)Bearsampp(\]\()/m,
                     (_, prefix, suffix) => `${prefix}${slug}${suffix}`
