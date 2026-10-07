@@ -47,7 +47,7 @@
 					description="MOD_BEARSAMPP_STATS_MODULES_DESC"
 					rows="6"
 					cols="40"
-					default="module-apache"
+					default="bearsampp"
 				/>
 				<field
 					name="parent_repo"
@@ -81,6 +81,7 @@
 					default="5"
 					class="btn-group btn-group-yesno"
 				>
+					<option value="2">2</option>
 					<option value="3">3</option>
 					<option value="4">4</option>
 					<option value="5">5</option>

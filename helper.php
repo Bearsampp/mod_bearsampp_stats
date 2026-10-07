@@ -44,13 +44,9 @@ class ModBearsamppStatsHelper
         $result = [];
 
         foreach ($items as $slug) {
-            // Normalize slug: "module-apache" and "apache" are equivalent and both
-            // map to the "module-apache" repo.
-            if (strpos($slug, 'module-') !== 0) {
-                $slugNorm = 'module-' . $slug;
-            } else {
-                $slugNorm = $slug;
-            }
+            // Use the slug exactly as provided (no auto-prefixing).
+            // The list entry is treated as the actual repository name.
+            $slugNorm = $slug;
 
             // Display name: remove "module-" and title-case
             $nameBase = str_replace('module-', '', $slugNorm);

@@ -2,16 +2,27 @@
     --bs-gap: 1rem;
 }
 
-.bearsampp-stats-grid.bearsampp-stats-cols-3 {
-    grid-template-columns: repeat(3, 1fr);
+.bearsampp-stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bs-gap, 1rem);
+    justify-content: flex-start;
 }
 
-.bearsampp-stats-grid.bearsampp-stats-cols-4 {
-    grid-template-columns: repeat(4, 1fr);
+.bearsampp-stats-grid.bearsampp-stats-cols-2 .bearsampp-stats-card {
+    flex: 0 0 calc(50% - var(--bs-gap, 1rem));
 }
 
-.bearsampp-stats-grid.bearsampp-stats-cols-5 {
-    grid-template-columns: repeat(5, 1fr);
+.bearsampp-stats-grid.bearsampp-stats-cols-3 .bearsampp-stats-card {
+    flex: 0 0 calc(33.333% - var(--bs-gap, 1rem));
+}
+
+.bearsampp-stats-grid.bearsampp-stats-cols-4 .bearsampp-stats-card {
+    flex: 0 0 calc(25% - var(--bs-gap, 1rem));
+}
+
+.bearsampp-stats-grid.bearsampp-stats-cols-5 .bearsampp-stats-card {
+    flex: 0 0 calc(20% - var(--bs-gap, 1rem));
 }
 
 .bearsampp-stats-card {
