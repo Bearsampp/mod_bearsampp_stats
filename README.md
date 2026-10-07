@@ -36,8 +36,7 @@ This module lets bearsampp.com display per-module stats without relying on GitHu
   https://raw.githubusercontent.com/YourName/<module-slug>/<branch>/stats/dashboard.md
   ```
 
-- On click, it fetches:
-
+- On click, it fetches the raw `stats/dashboard.md` for that module and branch.
 - Markdown is parsed and sanitized in the browser, then injected into a Bootstrap 5 modal. External links open in a new tab.
 - Results are cached in `localStorage` per `module+branch` to reduce repeated fetches.
 
