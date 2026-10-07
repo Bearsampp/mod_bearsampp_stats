@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchAndRender = async (rawUrl, module, slug, branch, contentEl, loadingEl, errorEl, isModal = false) => {
         const baseUrl = rawUrl.substring(0, rawUrl.lastIndexOf('/') + 1);
-        const cacheKey = `bearsampp-stats:${module}:${slug}:${branch}`;
+        const cacheKey = `bearsampp-stats:v2:${module}:${slug}:${branch}`;
         let htmlContent = getCache(cacheKey);
 
         if (htmlContent) {
@@ -69,7 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(rawUrl, { cache: 'no-cache' });
             if (!response.ok) throw new Error('HTTP ' + response.status);
 
-            const markdown = await response.text();
+            const markdown = (await response.text())
+                .replace(/^# Bearsampp Downloads$/m, `# ${slug} Downloads`)
+                .replace(
+                    /^(Release asset download totals for \[)Bearsampp(\]\()/m,
+                    (_, prefix, suffix) => `${prefix}${slug}${suffix}`
+                );
             if (!window.marked || typeof window.marked.parse !== 'function') {
                 throw new Error('Markdown renderer is unavailable.');
             }
