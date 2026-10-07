@@ -17,7 +17,15 @@ use Joomla\CMS\Uri\Uri;
 // Load Web Assets
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->registerAndUseStyle('mod_bearsampp_stats.style', 'mod_bearsampp_stats/style.css');
-$wa->registerAndUseScript('mod_bearsampp_stats.script', 'mod_bearsampp_stats/mod_bearsampp_stats.js', [], ['type' => 'module'], ['core']);
+$wa->registerAndUseScript('mod_bearsampp_stats.marked', 'https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js');
+$wa->registerAndUseScript('mod_bearsampp_stats.dompurify', 'https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js');
+$wa->registerAndUseScript(
+    'mod_bearsampp_stats.script',
+    'mod_bearsampp_stats/mod_bearsampp_stats.js',
+    [],
+    ['type' => 'module'],
+    ['core', 'mod_bearsampp_stats.marked', 'mod_bearsampp_stats.dompurify']
+);
 
 // Pass data to JS
 $doc = Factory::getDocument();

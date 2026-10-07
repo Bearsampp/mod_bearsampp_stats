@@ -70,8 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('HTTP ' + response.status);
 
             const markdown = await response.text();
-            let html = marked.parse ? marked.parse(markdown) : markdown;
-            if (window.DOMPurify) html = DOMPurify.sanitize(html);
+            if (!window.marked || typeof window.marked.parse !== 'function') {
+                throw new Error('Markdown renderer is unavailable.');
+            }
+            if (!window.DOMPurify || typeof window.DOMPurify.sanitize !== 'function') {
+                throw new Error('HTML sanitizer is unavailable.');
+            }
+            const html = window.DOMPurify.sanitize(window.marked.parse(markdown));
 
             setCache(cacheKey, html);
             renderContent(html, contentEl, baseUrl);
