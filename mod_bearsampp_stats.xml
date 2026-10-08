@@ -47,14 +47,14 @@
 					description="MOD_BEARSAMPP_STATS_MODULES_DESC"
 					rows="6"
 					cols="40"
-					default=""
+					default="mod_bearsampp_stats"
 				/>
 				<field
-					name="parent_repo"
+					name="repo_owner"
 					type="text"
-					label="MOD_BEARSAMPP_STATS_PARENT_LABEL"
-					description="MOD_BEARSAMPP_STATS_PARENT_DESC"
-					default="https://github.com/Bearsampp"
+					label="MOD_BEARSAMPP_STATS_OWNER_LABEL"
+					description="MOD_BEARSAMPP_STATS_OWNER_DESC"
+					default="Bearsampp"
 					size="40"
 				/>
 				<field

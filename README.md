@@ -22,8 +22,8 @@ This module lets bearsampp.com display per-module stats without relying on GitHu
 
 ## How it works
 
-- Each card corresponds to a module repo under your configured parent path (default `https://github.com/Bearsampp`).
-- For a normal Joomla user *(not hosting the `Bearsampp` organisation)*, set the **Parent repository** param to your own GitHub path, e.g.:
+- Each card corresponds to a module repo owned by your configured GitHub owner (default `Bearsampp`).
+- If the modules are forked to another GitHub account, set the **Repository owner** parameter to that owner, e.g.:
 
   ```text
   https://github.com/YourName
@@ -42,7 +42,7 @@ This module lets bearsampp.com display per-module stats without relying on GitHu
 
 ### Repo name resolution
 
-Each entry in **Modules list** names a repository under your **Parent repository** path. `module-apache` and `apache` are **the same thing** — both resolve to the `module-apache` repo:
+Each entry in **Modules list** names a repository owned by your configured **Repository owner**. `module-apache` and `apache` are **the same thing** — both resolve to the `module-apache` repo:
 
 ```text
 apache         → https://raw.githubusercontent.com/YourName/module-apache/<branch>/gh-dl/dashboard.md
@@ -61,8 +61,8 @@ The default list uses the prefixed form (`module-apache,module-bruno,...`), but 
 
 | Field | Default | Description |
 |---|---|---|
-| Modules list | `bearsampp` | Comma/line-separated entries. Spaces after commas are allowed. Each entry is used as the repository name under the parent (e.g. `bearsampp` → `bearsampp`, `module-apache` → `module-apache`). Order = grid order (left-to-right, top-to-bottom). |
-| Parent repository | `https://github.com/Bearsampp` | GitHub organisation/user that hosts the module repos. Enter your own path here, e.g. `https://github.com/YourName` (or just `YourName`). |
+| Modules list | `bearsampp` | Comma/line-separated entries. Spaces after commas are allowed. Each entry is used as the repository name under the configured owner (e.g. `bearsampp` → `bearsampp`, `module-apache` → `module-apache`). Order = grid order (left-to-right, top-to-bottom). |
+| Repository owner | `Bearsampp` | GitHub organisation/user that owns the module repos. Enter your own account here, e.g. `https://github.com/YourName` (or just `YourName`). |
 | Branch | `main` | Git branch to pull `gh-dl/dashboard.md` from. |
   https://raw.githubusercontent.com/YourName/<module-slug>/<branch>/stats/dashboard.md
 | Stats folder | stats | Folder inside each module repo that holds dashboard.md and its charts. |

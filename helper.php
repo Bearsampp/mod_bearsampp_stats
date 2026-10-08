@@ -103,7 +103,7 @@ class ModBearsamppStatsHelper
     }
 
     /**
-     * Resolve the GitHub organisation/user (parent path) that hosts the module repos.
+     * Resolve the GitHub organisation/user that owns the module repos.
      * Accepts "https://github.com/Bearsampp", "github.com/Bearsampp", "Bearsampp" or
      * "Bearsampp/module-apache" (only the first path segment is used).
      *
@@ -113,7 +113,7 @@ class ModBearsamppStatsHelper
      */
     public static function getOwner($params)
     {
-        $owner = trim((string) $params->get('parent_repo'));
+        $owner = trim(str_replace('https://github.com/', '', trim((string) $params->get('repo_owner'))));
         return $owner !== '' ? $owner : 'Bearsampp';
     }
 }
