@@ -47,7 +47,7 @@
 					description="MOD_BEARSAMPP_STATS_MODULES_DESC"
 					rows="6"
 					cols="40"
-					default="bearsampp"
+					default=""
 				/>
 				<field
 					name="parent_repo"
