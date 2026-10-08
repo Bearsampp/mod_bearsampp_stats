@@ -5,14 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2026.10.07.11] - 2026-10-07
+## [2026.10.08] - 2026-10-08
 
 ### Changed
 
-* Update version to 2026.10.07.9 [skip ci] ([353c082](https://github.com/Bearsampp/mod_bearsampp_stats/commit/353c082))
-* Update cache key versioning and replace repository name in markdown content ([f92afdb](https://github.com/Bearsampp/mod_bearsampp_stats/commit/f92afdb))
-* Merge remote-tracking branch 'origin/main' ([6ef7759](https://github.com/Bearsampp/mod_bearsampp_stats/commit/6ef7759))
 * Update version to 2026.10.07.10 [skip ci] ([141478c](https://github.com/Bearsampp/mod_bearsampp_stats/commit/141478c))
 * Update dashboard heading from "Downloads" to "Statistics" in markdown replacement ([f840565](https://github.com/Bearsampp/mod_bearsampp_stats/commit/f840565))
 * Merge remote-tracking branch 'origin/main' ([f15e542](https://github.com/Bearsampp/mod_bearsampp_stats/commit/f15e542))
+* Update version to 2026.10.07.11 [skip ci] ([dacb9db](https://github.com/Bearsampp/mod_bearsampp_stats/commit/dacb9db))
+* Merge remote-tracking branch 'origin/main' ([715c935](https://github.com/Bearsampp/mod_bearsampp_stats/commit/715c935))
+* Update stats downloads snapshot ([48d76ca](https://github.com/Bearsampp/mod_bearsampp_stats/commit/48d76ca))
+* Merge pull request #1 from Bearsampp/update-stats ([7efcb41](https://github.com/Bearsampp/mod_bearsampp_stats/commit/7efcb41))
+
+### Removed
+
+* Remove default module list value and add automated stats workflow with PR creation ([d989e11](https://github.com/Bearsampp/mod_bearsampp_stats/commit/d989e11))
 
