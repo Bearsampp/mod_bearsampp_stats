@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 3 or later</license>
 	<authorEmail>support@bearsampp.com</authorEmail>
 	<authorUrl>https://bearsampp.com</authorUrl>
-	<version>2026.10.08</version>
+	<version>2026.10.08.1</version>
 	<description>MOD_BEARSAMPP_STATS_DESC</description>
 	<namespace path="src">Bearsampp\Module\Stats</namespace>
 	<dependencies>
