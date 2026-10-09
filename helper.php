@@ -3,7 +3,7 @@
 /**
  * @package     Bearsampp.Module.Stats
  * @subpackage  mod_bearsampp_stats
- * @license     GNU General Public License version 2 or later
+ * @license     GNU General Public License version 3 or later
  * @link        https://github.com/Bearsampp/mod_bearsampp_stats
  */
 
@@ -23,11 +23,11 @@ class ModBearsamppStatsHelper
         $listRaw     = trim((string) $params->get('modules_list', ''));
         $branch      = trim((string) $params->get('branch', 'main'));
         $ttl         = (int) $params->get('cache_ttl_minutes', 30);
-        $statsFolder = trim((string) $params->get('stats_folder', 'gh-dl'));
+        $statsFolder = trim((string) $params->get('stats_folder', 'stats'));
         $owner       = self::getOwner($params);
 
         // Sanitize folder name (single folder segment, no path traversal)
-        $statsFolder = preg_replace('#[^a-zA-Z0-9._-]#', '', $statsFolder ?: 'gh-dl');
+        $statsFolder = preg_replace('#[^a-zA-Z0-9._-]#', '', $statsFolder ?: 'stats');
         $statsFolder = $statsFolder !== '' ? $statsFolder : 'stats';
 
         if ($listRaw === '') {
@@ -103,9 +103,9 @@ class ModBearsamppStatsHelper
     }
 
     /**
-     * Resolve the GitHub organisation/user that owns the module repos.
+     * Resolve the GitHub organisation/user that owns the repositories.
      * Accepts "https://github.com/Bearsampp", "github.com/Bearsampp", "Bearsampp" or
-     * "Bearsampp/module-apache" (only the first path segment is used).
+     * "Bearsampp/mod_bearsampp_stats" (only the first path segment is used).
      *
      * @param   \Joomla\Registry\Registry  $params
      *
@@ -113,7 +113,10 @@ class ModBearsamppStatsHelper
      */
     public static function getOwner($params)
     {
-        $owner = trim(str_replace('https://github.com/', '', trim((string) $params->get('repo_owner'))));
+        $owner = trim((string) $params->get('repo_owner'));
+        $owner = preg_replace('#^(?:https?://)?(?:www\.)?github\.com/#i', '', $owner);
+        $owner = explode('/', trim($owner, '/ '))[0];
+
         return $owner !== '' ? $owner : 'Bearsampp';
     }
 }

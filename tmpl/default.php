@@ -3,7 +3,7 @@
 /**
  * @package     Bearsampp.Module.Stats
  * @subpackage  mod_bearsampp_stats
- * @license     GNU General Public License version 2 or later
+ * @license     GNU General Public License version 3 or later
  * @link        https://github.com/Bearsampp/mod_bearsampp_stats
  */
 
@@ -43,11 +43,15 @@ $doc->addScriptOptions('mod_bearsampp_stats', [
 ]);
 
 $modalId = 'bearsampp-stats-modal-' . $module->id;
+
+// Single-article layout: exactly one repository. Multiple repositories always use the
+// card grid; a 1-column grid simply stacks full-width cards that still open the modal.
+$isSingleLayout = (count($modules) === 1);
 ?>
 
 <div class="mod-bearsampp-stats <?php echo htmlspecialchars($params->get('moduleclass_sfx', '')); ?>">
-    <?php if (count($modules) === 1): ?>
-        <?php $m = $modules[0]; ?>
+    <?php if ($isSingleLayout): ?>
+        <?php foreach ($modules as $m): ?>
         <div class="bearsampp-stats-inline"
              data-module="<?php echo htmlspecialchars($m['nameBase']); ?>"
              data-slug="<?php echo htmlspecialchars($m['slug']); ?>"
@@ -62,6 +66,7 @@ $modalId = 'bearsampp-stats-modal-' . $module->id;
             <div class="bearsampp-stats-content d-none"></div>
             <div class="bearsampp-stats-error d-none alert alert-warning mt-0" role="alert"></div>
         </div>
+        <?php endforeach; ?>
     <?php else: ?>
         <div class="bearsampp-stats-grid bearsampp-stats-cols-<?php echo (int) $gridCols; ?>">
             <?php foreach ($modules as $m): ?>
@@ -96,7 +101,7 @@ $modalId = 'bearsampp-stats-modal-' . $module->id;
     <?php endif; ?>
 </div>
 
-<?php if (count($modules) > 1): ?>
+<?php if (!$isSingleLayout && count($modules) > 1): ?>
 <!-- Bootstrap 5 Modal -->
 <div class="modal fade bearsampp-stats-modal" id="<?php echo $modalId; ?>" tabindex="-1" aria-hidden="true" aria-labelledby="<?php echo $modalId; ?>-label">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">

@@ -17,3 +17,6 @@ desktop.ini
 # Build artifacts
 build/
 *.zip
+
+# Local documentation (not committed)
+docs/

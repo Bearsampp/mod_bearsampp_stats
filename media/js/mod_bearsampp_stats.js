@@ -1,7 +1,7 @@
 /**
  * @package     Bearsampp.Module.Stats
  * @subpackage  mod_bearsampp_stats
- * @license     GNU General Public License version 2 or later
+ * @license     GNU General Public License version 3 or later
  * @link        https://github.com/Bearsampp/mod_bearsampp_stats
  */
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchAndRender = async (rawUrl, module, slug, branch, contentEl, loadingEl, errorEl, isModal = false) => {
         const baseUrl = rawUrl.substring(0, rawUrl.lastIndexOf('/') + 1);
-        const cacheKey = `bearsampp-stats:v2:${module}:${slug}:${branch}`;
+        const cacheKey = `bearsampp-stats:v3:${module}:${slug}:${branch}`;
         let htmlContent = getCache(cacheKey);
 
         if (htmlContent) {
@@ -67,12 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (errorEl) errorEl.classList.add('d-none');
 
             const response = await fetch(rawUrl, { cache: 'no-cache' });
+            if (response.status === 404) throw new Error('NOT_FOUND');
             if (!response.ok) throw new Error('HTTP ' + response.status);
 
             const markdown = (await response.text())
-                .replace(/^# Bearsampp Downloads$/m, `# ${slug} Statistics`)
+                .replace(/^#\s+.*$/m, `# ${slug} Statistics`)
                 .replace(
-                    /^(Release asset download totals for \[)Bearsampp(\]\()/m,
+                    /^(Release asset download totals for \[)[^\]]+(\]\()/m,
                     (_, prefix, suffix) => `${prefix}${slug}${suffix}`
                 );
             if (!window.marked || typeof window.marked.parse !== 'function') {
@@ -94,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loadingEl) loadingEl.classList.add('d-none');
             if (contentEl) contentEl.classList.add('d-none');
             if (errorEl) {
-                errorEl.textContent = i18n.errorFetch || 'Failed to load stats.';
+                errorEl.textContent = (err && err.message === 'NOT_FOUND')
+                    ? (i18n.noStats || 'Stats coming soon for this module.')
+                    : (i18n.errorFetch || 'Failed to load stats.');
                 errorEl.classList.remove('d-none');
             }
             if (isModal && bsModal) bsModal.hide();
@@ -140,9 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Inline single module
-    const inline = document.querySelector('.bearsampp-stats-inline');
-    if (inline) {
+    // Inline single-article layout (one or more stacked dashboards)
+    document.querySelectorAll('.bearsampp-stats-inline').forEach((inline) => {
         const module = inline.dataset.module;
         const slug = inline.dataset.slug;
         const rawUrl = inline.dataset.rawurl;
@@ -152,5 +154,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rawUrl) {
             fetchAndRender(rawUrl, module, slug, options.branch || 'main', contentEl, loadingEl, errorEl, false);
         }
-    }
+    });
 });

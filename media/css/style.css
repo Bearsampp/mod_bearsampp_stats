@@ -9,6 +9,10 @@
     justify-content: flex-start;
 }
 
+.bearsampp-stats-grid.bearsampp-stats-cols-1 .bearsampp-stats-card {
+    flex: 0 0 100%;
+}
+
 .bearsampp-stats-grid.bearsampp-stats-cols-2 .bearsampp-stats-card {
     flex: 0 0 calc(50% - var(--bs-gap, 1rem));
 }
@@ -23,6 +27,14 @@
 
 .bearsampp-stats-grid.bearsampp-stats-cols-5 .bearsampp-stats-card {
     flex: 0 0 calc(20% - var(--bs-gap, 1rem));
+}
+
+.bearsampp-stats-grid.bearsampp-stats-cols-6 .bearsampp-stats-card {
+    flex: 0 0 calc(16.6667% - var(--bs-gap, 1rem));
+}
+
+.bearsampp-stats-grid.bearsampp-stats-cols-7 .bearsampp-stats-card {
+    flex: 0 0 calc(14.2857% - var(--bs-gap, 1rem));
 }
 
 .bearsampp-stats-card {

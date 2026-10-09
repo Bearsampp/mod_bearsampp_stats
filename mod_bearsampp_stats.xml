@@ -4,7 +4,7 @@
 	<author>Bearsampp</author>
 	<creationDate>2026 October 08</creationDate>
 	<copyright>Copyright (C) 2025 - 2026 Bearsampp</copyright>
-	<license>GNU General Public License version 2 or later</license>
+	<license>GNU General Public License version 3 or later</license>
 	<authorEmail>support@bearsampp.com</authorEmail>
 	<authorUrl>https://bearsampp.com</authorUrl>
 	<version>2026.10.08</version>
@@ -70,7 +70,7 @@
 					type="text"
 					label="MOD_BEARSAMPP_STATS_FOLDER_LABEL"
 					description="MOD_BEARSAMPP_STATS_FOLDER_DESC"
-					default="gh-dl"
+					default="stats"
 					size="20"
 				/>
 				<field
@@ -81,10 +81,13 @@
 					default="5"
 					class="btn-group btn-group-yesno"
 				>
+					<option value="1">1</option>
 					<option value="2">2</option>
 					<option value="3">3</option>
 					<option value="4">4</option>
 					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
 				</field>
 				<field
 					name="cache_ttl_minutes"
