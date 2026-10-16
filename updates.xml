@@ -16,6 +16,6 @@
             <tag>github</tag>
             <tag>dashboard</tag>
         </tags>
-        <targetplatform name="joomla" version="[56]\.[0-9]+" />
+		<targetplatform name="joomla" version="(5|6).*" />
     </update>
 </updates>
