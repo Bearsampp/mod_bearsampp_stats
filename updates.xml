@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <updates>
-    <update>
-        <name>mod_bearsampp_stats</name>
-        <description>Bearsampp Stats - GitHub statistics grid for Joomla</description>
-        <element>mod_bearsampp_stats</element>
-        <type>module</type>
-        <client>site</client>
-        <version>2026.10.09</version>
-        <infourl title="Bearsampp Stats">https://bearsampp.com</infourl>
-        <downloads>
-            <downloadurl type="full" format="zip">https://github.com/Bearsampp/mod_bearsampp_stats/releases/download/2026.10.09/mod_bearsampp_stats_2026.10.09.zip</downloadurl>
-        </downloads>
-        <tags>
-            <tag>stats</tag>
-            <tag>github</tag>
-            <tag>dashboard</tag>
-        </tags>
-		<targetplatform name="joomla" version="(5|6).*" />
-    </update>
+  <update>
+    <name>mod_bearsampp_stats</name>
+    <description>Bearsampp Stats - GitHub statistics grid for Joomla</description>
+    <element>mod_bearsampp_stats</element>
+    <type>module</type>
+    <client>site</client>
+    <version>2026.10.09</version>
+    <infourl title="Bearsampp Stats">https://bearsampp.com</infourl>
+    <downloads>
+      <downloadurl type="full" format="zip">https://github.com/Bearsampp/mod_bearsampp_stats/releases/download/2026.10.09/mod_bearsampp_stats_2026.10.09.zip</downloadurl>
+    </downloads>
+    <tags>
+      <tag>stats</tag>
+      <tag>github</tag>
+      <tag>dashboard</tag>
+    </tags>
+    <targetplatform name="joomla" version="(5|6).*" />
+    <sha256>0169a4c647ec7f6c9c561d77b47d28794467385e580bcf8962a6ff9adfdd2902</sha256>
+  </update>
 </updates>

@@ -2,7 +2,7 @@
 <extension type="module" client="site" method="upgrade">
 	<name>MOD_BEARSAMPP_STATS</name>
 	<author>Bearsampp</author>
-	<creationDate>2026 October 09</creationDate>
+	<creationDate>2026 October 17</creationDate>
 	<copyright>Copyright (C) 2025 - 2026 Bearsampp</copyright>
 	<license>GNU General Public License version 3 or later</license>
 	<authorEmail>support@bearsampp.com</authorEmail>
